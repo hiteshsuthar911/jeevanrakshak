@@ -16,13 +16,9 @@ const weatherRoutes = require('./routes/weather');
 
 // Connect DB
 connectDB().then(async () => {
-  const User = require('./models/User');
-  const userCount = await User.countDocuments();
-  if (userCount === 0) {
-    console.log('==> No users found. Auto-seeding default accounts...');
-    const seedUsers = require('./seed/test_users');
-    await seedUsers(false);
-  }
+  console.log('==> Ensuring default accounts exist...');
+  const seedUsers = require('./seed/test_users');
+  await seedUsers(false);
 });
 
 const app = express();
