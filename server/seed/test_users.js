@@ -4,9 +4,13 @@ const User = require('../models/User');
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/jeevanrakshak';
 
-const createTestUsers = async () => {
-  await mongoose.connect(MONGO_URI);
-  console.log('🌱 Connected to MongoDB. Creating test users...');
+const createTestUsers = async (shouldDisconnect = true) => {
+  // Use existing connection if available
+  if (mongoose.connection.readyState !== 1) {
+    await mongoose.connect(MONGO_URI);
+  }
+  
+  console.log('🌱 Creating/Updating test users...');
 
   // Helper to create or update user correctly triggering hooks
   const upsertUser = async (email, data) => {
@@ -45,11 +49,16 @@ const createTestUsers = async () => {
   console.log('✅ Rescue Team created/updated: rescue@jr.in / Rescue@1234');
   console.log('✅ Admin: admin@jeevanrakshak.in / Admin@1234');
 
-  await mongoose.disconnect();
-  process.exit(0);
+  if (shouldDisconnect) {
+    await mongoose.disconnect();
+  }
 };
 
-createTestUsers().catch(err => {
-  console.error('❌ Error creating test users:', err);
-  process.exit(1);
-});
+module.exports = createTestUsers;
+
+if (require.main === module) {
+  createTestUsers(true).then(() => process.exit(0)).catch(err => {
+    console.error('❌ Error creating test users:', err);
+    process.exit(1);
+  });
+}

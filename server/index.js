@@ -49,6 +49,12 @@ app.get('/api/stats', async (req, res) => {
   try {
     const Incident = require('./models/Incident');
     const User = require('./models/User');
+    const userCount = await User.countDocuments();
+    if (userCount === 0) {
+      console.log('==> No users found. Auto-seeding default accounts...');
+      const seedUsers = require('./seed/test_users');
+      await seedUsers(false); // Don't disconnect mongoose
+    }
     const [incidents, rescues, citizens] = await Promise.all([
       Incident.countDocuments({ status: { $ne: 'resolved' } }),
       User.countDocuments({ role: 'rescue' }),
