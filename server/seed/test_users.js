@@ -45,6 +45,14 @@ const createTestUsers = async (shouldDisconnect = true) => {
     status: 'active'
   });
 
+  // Create Admin
+  await upsertUser('admin@jeevanrakshak.in', {
+    name: 'JeevanRakshak Admin',
+    password: 'Admin@1234',
+    role: 'admin',
+    phone: '+91 9000000000'
+  });
+
   console.log('✅ Citizen created/updated: citizen@jr.in / Pass@1234');
   console.log('✅ Rescue Team created/updated: rescue@jr.in / Rescue@1234');
   console.log('✅ Admin: admin@jeevanrakshak.in / Admin@1234');
